@@ -5,6 +5,11 @@ type ScenarioName = 'duel' | 'breach';
 
 type ScenarioFactory = () => Unit[];
 
+const scenarioSeeds: Record<ScenarioName, number> = {
+  duel: 0x1d00f,
+  breach: 0x5eed5,
+};
+
 const factories: Record<ScenarioName, ScenarioFactory> = {
   duel: () => [
     makeUnit(1, 'Blue', 'Blue One', { x: 2, y: 2 }),
@@ -23,7 +28,7 @@ export function makeScenario(sim: Sim, name: ScenarioName): void {
   if (!factory) {
     throw new Error(`Unknown scenario: ${name}`);
   }
-  sim.loadScenario({ units: factory() });
+  sim.loadScenario({ units: factory(), seed: scenarioSeeds[name] ?? 1 });
 }
 
 function makeUnit(id: number, faction: Unit['faction'], name: string, pos: Vec2): Unit {

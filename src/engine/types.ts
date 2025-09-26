@@ -19,6 +19,8 @@ export interface World {
   time: number;
   units: Unit[];
   lastOrders: string[];
+  rngSeed: number;
+  rngState: number;
 }
 
 export interface Plan {
