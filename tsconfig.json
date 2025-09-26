@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@engine/*": ["src/engine/*"],
+      "@game/*": ["src/game/*"],
+      "@render/*": ["src/render/*"],
+      "@ui/*": ["src/ui/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}

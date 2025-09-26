@@ -1,0 +1,35 @@
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+*.log
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Vite cache
+.vite/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+
+# macOS / Linux / Windows system files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Optional: ignore zip bundles you generate
+*.zip

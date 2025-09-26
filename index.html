@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Halo-WeGo Starter</title>
+    <style>
+      html, body, #app { margin:0; padding:0; width:100%; height:100%; background:#0e0e12; }
+      #hud { position:absolute; top:12px; left:12px; color:#eee; font:14px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+      #panel { position:absolute; top:12px; right:12px; width:280px; background:#14141a; color:#ddd; border:1px solid #2a2a33; padding:10px; border-radius:8px; }
+      button, select { margin-right:8px; margin-bottom:6px; }
+      .row { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+      .unit { padding:6px; background:#101018; border:1px solid #232334; border-radius:6px; margin-bottom:6px;}
+      .title { font-weight:bold; margin-bottom:6px; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="hud">
+      <div class="row">
+        <button id="btnRealtime">Real-time</button>
+        <button id="btnTurn">Turn</button>
+        <button id="btnWeGo">We-Go</button>
+        <button id="btnExecute">Execute / End Turn</button>
+        <button id="btnReplay">Replay</button>
+        <button id="btnOverlay">Toggle Explain</button>
+      </div>
+      <div class="row">
+        <button id="btnDuel">Load Duel</button>
+        <button id="btnBreach">Load Breach</button>
+      </div>
+    </div>
+
+    <div id="panel">
+      <div class="title">Policy Picker</div>
+      <div id="policyList"></div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
