@@ -1,7 +1,7 @@
 # Roadmap — MVP to Alpha
 
 ## Week 0–1: Skeleton & Determinism
-- [ ] Fixed-step sim @ 60 Hz with seeded RNG
+- [x] Fixed-step sim @ 60 Hz with seeded RNG
 - [ ] ECS-lite components: Transform, Kinematics, Health, Shield, Weapon, Faction
 - [ ] Weapon system: hitscan pistol; projectile frag with arc
 - [ ] LOS & simple cover tags
