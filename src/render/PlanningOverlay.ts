@@ -107,7 +107,7 @@ export class PlanningOverlay {
       return undefined;
     }
     const u = this.world.units.find((unit) => unit.id === this.plan.unitId);
-    return u?.pos;
+    return u?.transform.position;
   }
 
   private screenToWorld(x: number, y: number) {
