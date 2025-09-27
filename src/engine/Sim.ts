@@ -1,5 +1,9 @@
-import type { Plan, Vec2, World } from './types';
-import { Unit } from './types';
+import type {
+  Plan,
+  Vec2,
+  World,
+  Unit,
+} from './types';
 import { Rng } from './Rng';
 
 type ScenarioSeed = {
@@ -33,12 +37,7 @@ class SimImpl implements Sim {
 
   loadScenario(seed: ScenarioSeed): void {
     this.world.time = 0;
-    this.world.units = seed.units.map((unit) => ({
-      ...unit,
-      pos: { ...unit.pos },
-      aim: { ...unit.aim },
-      waypoints: unit.waypoints.map((wp) => ({ ...wp })),
-    }));
+    this.world.units = seed.units.map(cloneUnit);
     const nextSeed = seed.seed ?? 1;
     this.rng.setState(nextSeed);
     this.world.rngSeed = nextSeed;
@@ -57,10 +56,10 @@ class SimImpl implements Sim {
     unit.waypoints = plan.waypoints.map((wp) => ({ ...wp }));
     if (plan.fragTarget) {
       const dir = normalize({
-        x: plan.fragTarget.x - unit.pos.x,
-        y: plan.fragTarget.y - unit.pos.y,
+        x: plan.fragTarget.x - unit.transform.position.x,
+        y: plan.fragTarget.y - unit.transform.position.y,
       });
-      unit.aim = dir;
+      unit.transform.facing = dir;
     }
 
     this.lastAppliedOrders.push(
@@ -99,27 +98,30 @@ class SimImpl implements Sim {
     this.world.time += dt;
     for (const unit of this.world.units) {
       if (!unit.waypoints.length) {
+        unit.kinematics.velocity = { x: 0, y: 0 };
         continue;
       }
       const target = unit.waypoints[0];
       const direction = {
-        x: target.x - unit.pos.x,
-        y: target.y - unit.pos.y,
+        x: target.x - unit.transform.position.x,
+        y: target.y - unit.transform.position.y,
       };
       const distance = Math.hypot(direction.x, direction.y);
       if (distance < 0.01) {
-        unit.pos = { ...target };
+        unit.transform.position = { ...target };
+        unit.kinematics.velocity = { x: 0, y: 0 };
         unit.waypoints.shift();
         continue;
       }
 
-      const move = Math.min(unit.speed * dt, distance);
+      const move = Math.min(unit.kinematics.maxSpeed * dt, distance);
       const step = normalize(direction);
-      unit.pos = {
-        x: unit.pos.x + step.x * move,
-        y: unit.pos.y + step.y * move,
+      unit.transform.position = {
+        x: unit.transform.position.x + step.x * move,
+        y: unit.transform.position.y + step.y * move,
       };
-      unit.aim = step;
+      unit.transform.facing = step;
+      unit.kinematics.velocity = { x: step.x * move / dt, y: step.y * move / dt };
     }
   }
 
@@ -129,12 +131,7 @@ class SimImpl implements Sim {
       lastOrders: [...this.world.lastOrders],
       rngSeed: this.world.rngSeed,
       rngState: this.world.rngState,
-      units: this.world.units.map((unit) => ({
-        ...unit,
-        pos: { ...unit.pos },
-        aim: { ...unit.aim },
-        waypoints: unit.waypoints.map((wp) => ({ ...wp })),
-      })),
+      units: this.world.units.map(cloneUnit),
     };
   }
 
@@ -143,12 +140,7 @@ class SimImpl implements Sim {
     this.world.lastOrders = [...snapshot.lastOrders];
     this.world.rngSeed = snapshot.rngSeed;
     this.world.rngState = snapshot.rngState;
-    this.world.units = snapshot.units.map((unit) => ({
-      ...unit,
-      pos: { ...unit.pos },
-      aim: { ...unit.aim },
-      waypoints: unit.waypoints.map((wp) => ({ ...wp })),
-    }));
+    this.world.units = snapshot.units.map(cloneUnit);
     this.rng.setState(snapshot.rngState);
     this.accumulator = 0;
   }
@@ -156,6 +148,31 @@ class SimImpl implements Sim {
 
 export function createSim(): Sim {
   return new SimImpl();
+}
+
+function cloneUnit(unit: Unit): Unit {
+  return {
+    ...unit,
+    transform: {
+      position: { ...unit.transform.position },
+      facing: { ...unit.transform.facing },
+    },
+    kinematics: {
+      maxSpeed: unit.kinematics.maxSpeed,
+      velocity: { ...unit.kinematics.velocity },
+    },
+    health: { ...unit.health },
+    shield: unit.shield
+      ? {
+          current: unit.shield.current,
+          max: unit.shield.max,
+          rechargeRate: unit.shield.rechargeRate,
+        }
+      : undefined,
+    weapon: { ...unit.weapon },
+    faction: { ...unit.faction },
+    waypoints: unit.waypoints.map((wp) => ({ ...wp })),
+  };
 }
 
 function normalize(vec: Vec2): Vec2 {

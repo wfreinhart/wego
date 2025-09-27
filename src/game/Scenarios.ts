@@ -1,5 +1,5 @@
 import type { Sim } from '@engine/Sim';
-import type { Unit, Vec2 } from '@engine/types';
+import type { Faction, Unit, Vec2 } from '@engine/types';
 
 type ScenarioName = 'duel' | 'breach';
 
@@ -31,14 +31,48 @@ export function makeScenario(sim: Sim, name: ScenarioName): void {
   sim.loadScenario({ units: factory(), seed: scenarioSeeds[name] ?? 1 });
 }
 
-function makeUnit(id: number, faction: Unit['faction'], name: string, pos: Vec2): Unit {
+function makeUnit(id: number, faction: Faction, name: string, pos: Vec2): Unit {
+  const isBlue = faction === 'Blue';
   return {
     id,
-    faction,
     name,
-    pos: { ...pos },
-    aim: { x: 1, y: 0 },
-    speed: faction === 'Blue' ? 1.8 : 1.4,
+    faction: { team: faction },
+    transform: {
+      position: { ...pos },
+      facing: { x: 1, y: 0 },
+    },
+    kinematics: {
+      maxSpeed: isBlue ? 1.8 : 1.4,
+      velocity: { x: 0, y: 0 },
+    },
+    health: {
+      current: isBlue ? 100 : 90,
+      max: isBlue ? 100 : 90,
+    },
+    shield: isBlue
+      ? {
+          current: 25,
+          max: 25,
+          rechargeRate: 5,
+        }
+      : undefined,
+    weapon: isBlue
+      ? {
+          name: 'M7 SMG',
+          type: 'hitscan',
+          range: 12,
+          damage: 8,
+          fireRate: 10,
+          cooldownRemaining: 0,
+        }
+      : {
+          name: 'Plasma Rifle',
+          type: 'projectile',
+          range: 10,
+          damage: 10,
+          fireRate: 8,
+          cooldownRemaining: 0,
+        },
     waypoints: [],
   };
 }

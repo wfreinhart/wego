@@ -40,15 +40,23 @@ export class PolicyUI {
       <h3>Units</h3>
       <ul>
         ${world.units
-          .map(
-            (unit) => `
+          .map((unit) => {
+            const pos = unit.transform.position;
+            const hpPct = ((unit.health.current / unit.health.max) * 100).toFixed(0);
+            const shield = unit.shield
+              ? `${unit.shield.current.toFixed(0)}/${unit.shield.max.toFixed(0)}`
+              : '—';
+            return `
               <li>
                 <strong>${unit.name}</strong>
-                <div>Faction: ${unit.faction}</div>
-                <div>Position: ${unit.pos.x.toFixed(2)}, ${unit.pos.y.toFixed(2)}</div>
+                <div>Faction: ${unit.faction.team}</div>
+                <div>Position: ${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}</div>
+                <div>Health: ${unit.health.current.toFixed(0)}/${unit.health.max.toFixed(0)} (${hpPct}%)</div>
+                <div>Shield: ${shield}</div>
+                <div>Weapon: ${unit.weapon.name} (${unit.weapon.type})</div>
               </li>
-            `,
-          )
+            `;
+          })
           .join('')}
       </ul>
     `;

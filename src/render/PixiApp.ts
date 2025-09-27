@@ -59,14 +59,18 @@ export class PixiApp {
 
     this.worldLayer.removeChildren();
     for (const u of world.units) {
+      const pos = u.transform.position;
       const g = new Graphics();
-      g.circle(u.pos.x * 64, u.pos.y * 64, 10);
-      g.fill({ color: u.faction === 'Blue' ? 0x66aaff : 0xff6688 });
+      g.circle(pos.x * 64, pos.y * 64, 10);
+      g.fill({ color: u.faction.team === 'Blue' ? 0x66aaff : 0xff6688 });
       this.worldLayer.addChild(g);
 
       const aim = new Graphics();
-      aim.moveTo(u.pos.x * 64, u.pos.y * 64);
-      aim.lineTo(u.pos.x * 64 + u.aim.x * 24, u.pos.y * 64 + u.aim.y * 24);
+      aim.moveTo(pos.x * 64, pos.y * 64);
+      aim.lineTo(
+        pos.x * 64 + u.transform.facing.x * 24,
+        pos.y * 64 + u.transform.facing.y * 24,
+      );
       aim.stroke({ width: 2, color: 0xffffff, alpha: 0.4 });
       this.worldLayer.addChild(aim);
     }
